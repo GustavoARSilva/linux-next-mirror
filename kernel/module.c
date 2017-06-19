@@ -4211,7 +4211,7 @@ const struct exception_table_entry *search_module_extables(unsigned long addr)
 		goto out;
 
 	e = search_extable(mod->extable,
-			   mod->num_exentries,
+			   mod->extable + mod->num_exentries - 1,
 			   addr);
 out:
 	preempt_enable();

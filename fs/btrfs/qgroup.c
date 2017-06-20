@@ -998,9 +998,12 @@ static void report_reserved_underflow(struct btrfs_fs_info *fs_info,
 				      struct btrfs_qgroup *qgroup,
 				      u64 num_bytes)
 {
-	btrfs_warn(fs_info,
+#ifdef CONFIG_BTRFS_DEBUG
+	WARN_ON(qgroup->reserved < num_bytes);
+	btrfs_debug(fs_info,
 		"qgroup %llu reserved space underflow, have: %llu, to free: %llu",
 		qgroup->qgroupid, qgroup->reserved, num_bytes);
+#endif
 	qgroup->reserved = 0;
 }
 /*
@@ -1032,7 +1035,7 @@ static int __qgroup_excl_accounting(struct btrfs_fs_info *fs_info,
 	qgroup->excl_cmpr += sign * num_bytes;
 	if (sign > 0) {
 		trace_qgroup_update_reserve(fs_info, qgroup, -(s64)num_bytes);
-		if (WARN_ON(qgroup->reserved < num_bytes))
+		if (qgroup->reserved < num_bytes)
 			report_reserved_underflow(fs_info, qgroup, num_bytes);
 		else
 			qgroup->reserved -= num_bytes;
@@ -1059,7 +1062,7 @@ static int __qgroup_excl_accounting(struct btrfs_fs_info *fs_info,
 		if (sign > 0) {
 			trace_qgroup_update_reserve(fs_info, qgroup,
 						    -(s64)num_bytes);
-			if (WARN_ON(qgroup->reserved < num_bytes))
+			if (qgroup->reserved < num_bytes)
 				report_reserved_underflow(fs_info, qgroup,
 							  num_bytes);
 			else
@@ -2335,6 +2338,11 @@ static int qgroup_reserve(struct btrfs_root *root, u64 num_bytes, bool enforce)
 
 	if (num_bytes == 0)
 		return 0;
+
+	if (test_bit(BTRFS_FS_QUOTA_OVERRIDE, &fs_info->flags) &&
+	    capable(CAP_SYS_RESOURCE))
+		enforce = false;
+
 retry:
 	spin_lock(&fs_info->qgroup_lock);
 	quota_root = fs_info->quota_root;
@@ -2452,7 +2460,7 @@ void btrfs_qgroup_free_refroot(struct btrfs_fs_info *fs_info,
 		qg = unode_aux_to_qgroup(unode);
 
 		trace_qgroup_update_reserve(fs_info, qg, -(s64)num_bytes);
-		if (WARN_ON(qg->reserved < num_bytes))
+		if (qg->reserved < num_bytes)
 			report_reserved_underflow(fs_info, qg, num_bytes);
 		else
 			qg->reserved -= num_bytes;

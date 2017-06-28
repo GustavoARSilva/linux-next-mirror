@@ -277,6 +277,7 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
 {
 	struct inode *inode = file_inode(file);
 	u64 *argp = (u64 __user *)arg;
+	u64 h;
 	enum rw_hint hint;
 
 	switch (cmd) {
@@ -285,8 +286,9 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
 			return -EFAULT;
 		return 0;
 	case F_SET_FILE_RW_HINT:
-		if (get_user(hint, argp))
+		if (copy_from_user(&h, argp, sizeof(h)))
 			return -EFAULT;
+		hint = (enum rw_hint)h;
 		if (!rw_hint_valid(hint))
 			return -EINVAL;
 
@@ -299,8 +301,9 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
 			return -EFAULT;
 		return 0;
 	case F_SET_RW_HINT:
-		if (get_user(hint, argp))
+		if (copy_from_user(&h, argp, sizeof(h)))
 			return -EFAULT;
+		hint = (enum rw_hint)h;
 		if (!rw_hint_valid(hint))
 			return -EINVAL;
 

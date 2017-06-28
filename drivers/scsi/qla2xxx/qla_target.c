@@ -1875,7 +1875,6 @@ static int __qlt_24xx_handle_abts(struct scsi_qla_host *vha,
 {
 	struct qla_hw_data *ha = vha->hw;
 	struct qla_tgt_mgmt_cmd *mcmd;
-	struct qla_tgt_cmd *cmd;
 	int rc;
 
 	if (abort_cmd_for_tag(vha, abts->exchange_addr_to_abort)) {
@@ -1898,14 +1897,13 @@ static int __qlt_24xx_handle_abts(struct scsi_qla_host *vha,
 	}
 	memset(mcmd, 0, sizeof(*mcmd));
 
-	cmd = container_of(se_cmd, struct qla_tgt_cmd, se_cmd);
 	mcmd->sess = sess;
 	memcpy(&mcmd->orig_iocb.abts, abts, sizeof(mcmd->orig_iocb.abts));
 	mcmd->reset_count = ha->base_qpair->chip_reset;
 	mcmd->tmr_func = QLA_TGT_ABTS;
 	mcmd->qpair = ha->base_qpair;
 
-	rc = ha->tgt.tgt_ops->handle_tmr(mcmd, cmd->unpacked_lun, mcmd->tmr_func,
+	rc = ha->tgt.tgt_ops->handle_tmr(mcmd, 0, mcmd->tmr_func,
 	    abts->exchange_addr_to_abort);
 	if (rc != 0) {
 		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf052,

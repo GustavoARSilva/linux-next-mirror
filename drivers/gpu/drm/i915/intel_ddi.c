@@ -1174,6 +1174,9 @@ static void ddi_dotclock_get(struct intel_crtc_state *pipe_config)
 	else
 		dotclock = pipe_config->port_clock;
 
+	if (pipe_config->ycbcr420)
+		dotclock *= 2;
+
 	if (pipe_config->pixel_multiplier)
 		dotclock /= pipe_config->pixel_multiplier;
 
@@ -2010,8 +2013,8 @@ static void cnl_ddi_vswing_sequence(struct intel_encoder *encoder, u32 level)
 		val = I915_READ(CNL_PORT_TX_DW4_LN(port, ln));
 		val &= ~LOADGEN_SELECT;
 
-		if (((rate < 600000) && (width == 4) && (ln >= 1))  ||
-		    ((rate < 600000) && (width < 4) && ((ln == 1) || (ln == 2)))) {
+		if ((rate <= 600000 && width == 4 && ln >= 1)  ||
+		    (rate <= 600000 && width < 4 && (ln == 1 || ln == 2))) {
 			val |= LOADGEN_SELECT;
 		}
 		I915_WRITE(CNL_PORT_TX_DW4_LN(port, ln), val);

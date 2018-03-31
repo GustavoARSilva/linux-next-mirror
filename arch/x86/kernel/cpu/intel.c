@@ -540,7 +540,7 @@ static void detect_tme(struct cpuinfo_x86 *c)
 	if (mktme_status != MKTME_UNINITIALIZED) {
 		if (tme_activate != tme_activate_cpu0) {
 			/* Broken BIOS? */
-			pr_err_once("x86/tme: configuation is inconsistent between CPUs\n");
+			pr_err_once("x86/tme: configuration is inconsistent between CPUs\n");
 			pr_err_once("x86/tme: MKTME is not usable\n");
 			mktme_status = MKTME_DISABLED;
 
@@ -587,11 +587,8 @@ detect_keyid_bits:
 	}
 
 	/*
-	 * Exclude KeyID bits from physical address bits.
-	 *
-	 * We have to do this even if we are not going to use KeyID bits
-	 * ourself. VM guests still have to know that these bits are not usable
-	 * for physical address.
+	 * KeyID bits effectively lower the number of physical address
+	 * bits.  Update cpuinfo_x86::x86_phys_bits accordingly.
 	 */
 	c->x86_phys_bits -= keyid_bits;
 }

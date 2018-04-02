@@ -2808,7 +2808,7 @@ static void acpi_nfit_async_scrub(struct acpi_nfit_desc *acpi_desc,
 	unsigned int tmo = scrub_timeout;
 	int rc;
 
-	if (!nfit_spa->ars_required || !nfit_spa->nd_region)
+	if (!test_bit(ARS_REQ, &nfit_spa->ars_state) || !nfit_spa->nd_region)
 		return;
 
 	rc = ars_start(acpi_desc, nfit_spa);
@@ -3003,7 +3003,7 @@ static void acpi_nfit_scrub(struct work_struct *work)
 		 * register them now to make data available.
 		 */
 		if (!nfit_spa->nd_region) {
-			nfit_spa->ars_required = 1;
+			set_bit(ARS_REQ, &nfit_spa->ars_state);
 			acpi_nfit_register_region(acpi_desc, nfit_spa);
 		}
 	}
@@ -3261,7 +3261,7 @@ int acpi_nfit_ars_rescan(struct acpi_nfit_desc *acpi_desc, u8 flags)
 		if (nfit_spa_type(spa) != NFIT_SPA_PM)
 			continue;
 
-		nfit_spa->ars_required = 1;
+		set_bit(ARS_REQ, &nfit_spa->ars_state);
 	}
 	acpi_desc->ars_start_flags = flags;
 	queue_work(nfit_wq, &acpi_desc->work);

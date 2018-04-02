@@ -729,6 +729,7 @@ static int verity_prepare_ioctl(struct dm_target *ti,
 	struct dm_verity *v = ti->private;
 
 	*bdev = v->data_dev->bdev;
+	*mode = v->data_dev->mode;
 
 	if (v->data_start ||
 	    ti->len != i_size_read(v->data_dev->bdev->bd_inode) >> SECTOR_SHIFT)

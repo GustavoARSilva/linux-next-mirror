@@ -137,6 +137,7 @@ static int linear_prepare_ioctl(struct dm_target *ti,
 	struct dm_dev *dev = lc->dev;
 
 	*bdev = dev->bdev;
+	*mode = dev->mode;
 
 	/*
 	 * Only pass ioctls through if the device sizes match exactly.

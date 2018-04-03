@@ -1999,6 +1999,8 @@ static void nicvf_set_rx_mode(struct net_device *netdev)
 				struct xcast_addr *xaddr;
 
 				mc_list = kmalloc(sizeof(*mc_list), GFP_ATOMIC);
+				if (unlikely(!mc_list))
+					return
 				INIT_LIST_HEAD(&mc_list->list);
 				netdev_hw_addr_list_for_each(ha, &netdev->mc) {
 					xaddr = kmalloc(sizeof(*xaddr),

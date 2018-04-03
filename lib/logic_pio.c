@@ -33,14 +33,17 @@ static DEFINE_MUTEX(io_range_mutex);
 int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
 {
 	struct logic_pio_hwaddr *range;
-	resource_size_t start = new_range->hw_start;
-	resource_size_t end = new_range->hw_start + new_range->size;
+	resource_size_t start;
+	resource_size_t end;
 	resource_size_t mmio_sz = 0;
 	resource_size_t iio_sz = MMIO_UPPER_LIMIT;
 	int ret = 0;
 
 	if (!new_range || !new_range->fwnode || !new_range->size)
 		return -EINVAL;
+
+	start = new_range->hw_start;
+	end = new_range->hw_start + new_range->size;
 
 	mutex_lock(&io_range_mutex);
 	list_for_each_entry_rcu(range, &io_range_list, list) {

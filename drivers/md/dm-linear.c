@@ -59,6 +59,7 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 
 	ti->num_flush_bios = 1;
 	ti->num_discard_bios = 1;
+	ti->num_secure_erase_bios = 1;
 	ti->num_write_same_bios = 1;
 	ti->num_write_zeroes_bios = 1;
 	ti->private = lc;
@@ -136,6 +137,7 @@ static int linear_prepare_ioctl(struct dm_target *ti,
 	struct dm_dev *dev = lc->dev;
 
 	*bdev = dev->bdev;
+	*mode = dev->mode;
 
 	/*
 	 * Only pass ioctls through if the device sizes match exactly.

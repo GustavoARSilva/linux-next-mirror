@@ -658,7 +658,7 @@ static void rxrpc_rcu_destroy_call(struct rcu_head *rcu)
 	kfree(call->rxtx_annotations);
 	kmem_cache_free(rxrpc_call_jar, call);
 	if (atomic_dec_and_test(&rxnet->nr_calls))
-		wake_up_atomic_t(&rxnet->nr_calls);
+		wake_up_var(&rxnet->nr_calls);
 }
 
 /*
@@ -725,5 +725,5 @@ void rxrpc_destroy_all_calls(struct rxrpc_net *rxnet)
 	write_unlock(&rxnet->call_lock);
 
 	atomic_dec(&rxnet->nr_calls);
-	wait_on_atomic_t(&rxnet->nr_calls, atomic_t_wait, TASK_UNINTERRUPTIBLE);
+	wait_var_event(&rxnet->nr_calls, !atomic_read(&rxnet->nr_calls));
 }

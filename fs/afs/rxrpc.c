@@ -103,8 +103,8 @@ void afs_close_socket(struct afs_net *net)
 	}
 
 	_debug("outstanding %u", atomic_read(&net->nr_outstanding_calls));
-	wait_on_atomic_t(&net->nr_outstanding_calls, atomic_t_wait,
-			 TASK_UNINTERRUPTIBLE);
+	wait_var_event(&net->nr_outstanding_calls,
+		       !atomic_read(&net->nr_outstanding_calls));
 	_debug("no outstanding calls");
 
 	kernel_sock_shutdown(net->socket, SHUT_RDWR);
@@ -177,7 +177,7 @@ void afs_put_call(struct afs_call *call)
 
 		o = atomic_dec_return(&net->nr_outstanding_calls);
 		if (o == 0)
-			wake_up_atomic_t(&net->nr_outstanding_calls);
+			wake_up_var(&net->nr_outstanding_calls);
 	}
 }
 

@@ -459,6 +459,25 @@ struct btrfs_block_rsv {
 	unsigned short full;
 	unsigned short type;
 	unsigned short failfast;
+
+	/*
+	 * Qgroup equivalent for @size @reserved
+	 *
+	 * Unlike normal @size/@reserved for inode rsv, qgroup doesn't care
+	 * about things like csum size nor how many tree blocks it will need to
+	 * reserve.
+	 *
+	 * Qgroup cares more about net change of the extent usage.
+	 *
+	 * So for one newly inserted file extent, in worst case it will cause
+	 * leaf split and level increase, nodesize for each file extent is
+	 * already too much.
+	 *
+	 * In short, qgroup_size/reserved is the upper limit of possible needed
+	 * qgroup metadata reservation.
+	 */
+	u64 qgroup_rsv_size;
+	u64 qgroup_rsv_reserved;
 };
 
 /*
@@ -713,6 +732,12 @@ struct btrfs_delayed_root;
  * (device replace, resize, device add/delete, balance)
  */
 #define BTRFS_FS_EXCL_OP			16
+
+/*
+ * To info transaction_kthread we need an immediate commit so it doesn't
+ * need to wait for commit_interval
+ */
+#define BTRFS_FS_NEED_ASYNC_COMMIT		17
 
 struct btrfs_fs_info {
 	u8 fsid[BTRFS_FSID_SIZE];
@@ -3240,8 +3265,6 @@ int btrfs_is_empty_uuid(u8 *uuid);
 int btrfs_defrag_file(struct inode *inode, struct file *file,
 		      struct btrfs_ioctl_defrag_range_args *range,
 		      u64 newer_than, unsigned long max_pages);
-void btrfs_get_block_group_info(struct list_head *groups_list,
-				struct btrfs_ioctl_space_info *space);
 void update_ioctl_balance_args(struct btrfs_fs_info *fs_info, int lock,
 			       struct btrfs_ioctl_balance_args *bargs);
 ssize_t btrfs_dedupe_file_range(struct file *src_file, u64 loff, u64 olen,

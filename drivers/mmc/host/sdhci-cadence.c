@@ -275,10 +275,9 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
 					 !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
 					 0, 1);
 
-		return ret;
 	}
 
-	return 0;
+	return ret;
 }
 
 static int sdhci_cdns_execute_tuning(struct mmc_host *mmc, u32 opcode)

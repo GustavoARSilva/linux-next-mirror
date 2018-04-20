@@ -25,6 +25,7 @@
 #include "mac.h"
 
 #include <linux/log2.h>
+#include <linux/nospec.h>
 
 /* when under memory pressure rx ring refill may fail and needs a retry */
 #define HTT_RX_RING_REFILL_RETRY_MS 50
@@ -2688,6 +2689,8 @@ bool ath10k_htt_t2h_msg_handler(struct ath10k *ar, struct sk_buff *skb)
 			   resp->hdr.msg_type, ar->htt.t2h_msg_types_max);
 		return true;
 	}
+	resp->hdr.msg_type = array_index_nospec(resp->hdr.msg_type,
+						ar->htt.t2h_msg_types_max);
 	type = ar->htt.t2h_msg_types[resp->hdr.msg_type];
 
 	switch (type) {

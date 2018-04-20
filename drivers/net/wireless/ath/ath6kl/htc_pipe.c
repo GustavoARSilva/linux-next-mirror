@@ -18,6 +18,8 @@
 #include "debug.h"
 #include "hif-ops.h"
 
+#include <linux/nospec.h>
+
 #define HTC_PACKET_CONTAINER_ALLOCATION 32
 #define HTC_CONTROL_BUFFER_SIZE (HTC_MAX_CTRL_MSG_LEN + HTC_HDR_LENGTH)
 
@@ -988,6 +990,7 @@ static int ath6kl_htc_pipe_rx_complete(struct ath6kl *ar, struct sk_buff *skb,
 		status = -EINVAL;
 		goto free_skb;
 	}
+	htc_hdr->eid = array_index_nospec(htc_hdr->eid, ENDPOINT_MAX);
 	ep = &target->endpoint[htc_hdr->eid];
 
 	payload_len = le16_to_cpu(get_unaligned(&htc_hdr->payld_len));

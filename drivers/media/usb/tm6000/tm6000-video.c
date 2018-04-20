@@ -26,6 +26,7 @@
 #include <linux/kthread.h>
 #include <linux/highmem.h>
 #include <linux/freezer.h>
+#include <linux/nospec.h>
 
 #include "tm6000-regs.h"
 #include "tm6000.h"
@@ -875,6 +876,7 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
 	if (f->index >= ARRAY_SIZE(format))
 		return -EINVAL;
 
+	f->index = array_index_nospec(f->index, ARRAY_SIZE(format));
 	strlcpy(f->description, format[f->index].name, sizeof(f->description));
 	f->pixelformat = format[f->index].fourcc;
 	return 0;

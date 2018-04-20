@@ -21,6 +21,7 @@
 #include <linux/pci.h>
 #include <linux/rtnetlink.h>
 #include <linux/power_supply.h>
+#include <linux/nospec.h>
 #include "wil6210.h"
 #include "wmi.h"
 #include "txrx.h"
@@ -725,6 +726,7 @@ static ssize_t wil_write_back(struct file *file, const char __user *buf,
 			wil_err(wil, "BACK: invalid ring id %d\n", p1);
 			return -EINVAL;
 		}
+		p1 = array_index_nospec(p1, WIL6210_MAX_TX_RINGS);
 		txdata = &wil->vring_tx_data[p1];
 		if (strcmp(cmd, "add") == 0) {
 			if (rc < 3) {

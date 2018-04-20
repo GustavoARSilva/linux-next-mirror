@@ -19,6 +19,8 @@
 #include "hif.h"
 #include "debug.h"
 
+#include <linux/nospec.h>
+
 /********/
 /* Send */
 /********/
@@ -411,6 +413,7 @@ void ath10k_htc_rx_completion_handler(struct ath10k *ar, struct sk_buff *skb)
 		goto out;
 	}
 
+	eid = array_index_nospec(eid, ATH10K_HTC_EP_COUNT);
 	ep = &htc->endpoint[eid];
 
 	payload_len = __le16_to_cpu(hdr->len);

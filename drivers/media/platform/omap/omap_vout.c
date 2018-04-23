@@ -51,6 +51,8 @@
 #include "omap_voutdef.h"
 #include "omap_vout_vrfb.h"
 
+#include <linux/nospec.h>
+
 MODULE_AUTHOR("Texas Instruments");
 MODULE_DESCRIPTION("OMAP Video for Linux Video out driver");
 MODULE_LICENSE("GPL");
@@ -1059,6 +1061,7 @@ static int vidioc_enum_fmt_vid_out(struct file *file, void *fh,
 	if (index >= NUM_OUTPUT_FORMATS)
 		return -EINVAL;
 
+	index = array_index_nospec(index, NUM_OUTPUT_FORMATS);
 	fmt->flags = omap_formats[index].flags;
 	strlcpy(fmt->description, omap_formats[index].description,
 			sizeof(fmt->description));

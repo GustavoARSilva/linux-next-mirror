@@ -22,6 +22,8 @@
 #include "vivid-ctrls.h"
 #include "vivid-sdr-cap.h"
 
+#include <linux/nospec.h>
+
 /* stream formats */
 struct vivid_format {
 	u32	pixelformat;
@@ -320,11 +322,15 @@ int vivid_sdr_enum_freq_bands(struct file *file, void *fh,
 	case 0:
 		if (band->index >= ARRAY_SIZE(bands_adc))
 			return -EINVAL;
+		band->index = array_index_nospec(band->index,
+						 ARRAY_SIZE(bands_adc));
 		*band = bands_adc[band->index];
 		return 0;
 	case 1:
 		if (band->index >= ARRAY_SIZE(bands_fm))
 			return -EINVAL;
+		band->index = array_index_nospec(band->index,
+						 ARRAY_SIZE(bands_fm));
 		*band = bands_fm[band->index];
 		return 0;
 	default:

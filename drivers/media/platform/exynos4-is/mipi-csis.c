@@ -35,6 +35,8 @@
 
 #include "mipi-csis.h"
 
+#include <linux/nospec.h>
+
 static int debug;
 module_param(debug, int, 0644);
 MODULE_PARM_DESC(debug, "Debug level (0-2)");
@@ -545,7 +547,8 @@ static int s5pcsis_enum_mbus_code(struct v4l2_subdev *sd,
 {
 	if (code->index >= ARRAY_SIZE(s5pcsis_formats))
 		return -EINVAL;
-
+	code->index = array_index_nospec(code->index,
+					 ARRAY_SIZE(s5pcsis_formats));
 	code->code = s5pcsis_formats[code->index].code;
 	return 0;
 }

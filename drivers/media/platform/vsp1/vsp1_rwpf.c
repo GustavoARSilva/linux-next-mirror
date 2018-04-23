@@ -13,6 +13,8 @@
 
 #include <media/v4l2-subdev.h>
 
+#include <linux/nospec.h>
+
 #include "vsp1.h"
 #include "vsp1_rwpf.h"
 #include "vsp1_video.h"
@@ -44,6 +46,7 @@ static int vsp1_rwpf_enum_mbus_code(struct v4l2_subdev *subdev,
 	if (code->index >= ARRAY_SIZE(codes))
 		return -EINVAL;
 
+	code->index = array_index_nospec(code->index, ARRAY_SIZE(codes));
 	code->code = codes[code->index];
 
 	return 0;

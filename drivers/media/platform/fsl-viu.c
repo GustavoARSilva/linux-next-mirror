@@ -33,6 +33,8 @@
 #include <media/v4l2-event.h>
 #include <media/videobuf-dma-contig.h>
 
+#include <linux/nospec.h>
+
 #define DRV_NAME		"fsl_viu"
 #define VIU_VERSION		"0.5.1"
 
@@ -579,12 +581,10 @@ static int vidioc_querycap(struct file *file, void *priv,
 static int vidioc_enum_fmt(struct file *file, void  *priv,
 					struct v4l2_fmtdesc *f)
 {
-	int index = f->index;
-
 	if (f->index >= NUM_FORMATS)
 		return -EINVAL;
-
-	f->pixelformat = formats[index].fourcc;
+	f->index = array_index_nospec(f->index, NUM_FORMATS);
+	f->pixelformat = formats[f->index].fourcc;
 	return 0;
 }
 

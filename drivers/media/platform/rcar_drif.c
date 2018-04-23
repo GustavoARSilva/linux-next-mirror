@@ -66,6 +66,8 @@
 #include <media/videobuf2-v4l2.h>
 #include <media/videobuf2-vmalloc.h>
 
+#include <linux/nospec.h>
+
 /* DRIF register offsets */
 #define RCAR_DRIF_SITMDR1			0x00
 #define RCAR_DRIF_SITMDR2			0x04
@@ -905,7 +907,7 @@ static int rcar_drif_enum_fmt_sdr_cap(struct file *file, void *priv,
 {
 	if (f->index >= ARRAY_SIZE(formats))
 		return -EINVAL;
-
+	f->index = array_index_nospec(f->index, ARRAY_SIZE(formats));
 	f->pixelformat = formats[f->index].pixelformat;
 
 	return 0;

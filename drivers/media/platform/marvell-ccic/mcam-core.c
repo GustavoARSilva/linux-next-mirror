@@ -33,6 +33,8 @@
 
 #include "mcam-core.h"
 
+#include <linux/nospec.h>
+
 #ifdef MCAM_MODE_VMALLOC
 /*
  * Internal DMA buffer management.  Since the controller cannot do S/G I/O,
@@ -1318,6 +1320,7 @@ static int mcam_vidioc_enum_fmt_vid_cap(struct file *filp,
 {
 	if (fmt->index >= N_MCAM_FMTS)
 		return -EINVAL;
+	fmt->index = array_index_nospec(fmt->index, N_MCAM_FMTS);
 	strlcpy(fmt->description, mcam_formats[fmt->index].desc,
 			sizeof(fmt->description));
 	fmt->pixelformat = mcam_formats[fmt->index].pixelformat;

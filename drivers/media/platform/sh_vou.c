@@ -30,6 +30,8 @@
 #include <media/videobuf2-v4l2.h>
 #include <media/videobuf2-dma-contig.h>
 
+#include <linux/nospec.h>
+
 /* Mirror addresses are not available for all registers */
 #define VOUER	0
 #define VOUCR	4
@@ -398,6 +400,7 @@ static int sh_vou_enum_fmt_vid_out(struct file *file, void  *priv,
 
 	if (fmt->index >= ARRAY_SIZE(vou_fmt))
 		return -EINVAL;
+	fmt->index = array_index_nospec(fmt->index, ARRAY_SIZE(vou_fmt));
 
 	dev_dbg(vou_dev->v4l2_dev.dev, "%s()\n", __func__);
 

@@ -22,6 +22,8 @@
 
 #include "rcar-vin.h"
 
+#include <linux/nospec.h>
+
 #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
 #define RVIN_MAX_WIDTH		2048
 #define RVIN_MAX_HEIGHT		2048
@@ -340,7 +342,7 @@ static int rvin_enum_fmt_vid_cap(struct file *file, void *priv,
 {
 	if (f->index >= ARRAY_SIZE(rvin_formats))
 		return -EINVAL;
-
+	f->index = array_index_nospec(f->index, ARRAY_SIZE(rvin_formats));
 	f->pixelformat = rvin_formats[f->index].fourcc;
 
 	return 0;

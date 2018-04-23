@@ -24,6 +24,8 @@
 
 #include "vimc-common.h"
 
+#include <linux/nospec.h>
+
 #define VIMC_DEB_DRV_NAME "vimc-debayer"
 
 static unsigned int deb_mean_win_size = 3;
@@ -178,7 +180,8 @@ static int vimc_deb_enum_mbus_code(struct v4l2_subdev *sd,
 	} else {
 		if (code->index >= ARRAY_SIZE(vimc_deb_pix_map_list))
 			return -EINVAL;
-
+		code->index = array_index_nospec(code->index,
+					    ARRAY_SIZE(vimc_deb_pix_map_list));
 		code->code = vimc_deb_pix_map_list[code->index].code;
 	}
 

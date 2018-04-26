@@ -25,6 +25,8 @@
 #include "tw686x.h"
 #include "tw686x-regs.h"
 
+#include <linux/nospec.h>
+
 #define TW686X_INPUTS_PER_CH		4
 #define TW686X_VIDEO_WIDTH		720
 #define TW686X_VIDEO_HEIGHT(id)		((id & V4L2_STD_525_60) ? 480 : 576)
@@ -981,6 +983,7 @@ static int tw686x_enum_fmt_vid_cap(struct file *file, void *priv,
 {
 	if (f->index >= ARRAY_SIZE(formats))
 		return -EINVAL;
+	f->index = array_index_nospec(f->index, ARRAY_SIZE(formats));
 	f->pixelformat = formats[f->index].fourcc;
 	return 0;
 }

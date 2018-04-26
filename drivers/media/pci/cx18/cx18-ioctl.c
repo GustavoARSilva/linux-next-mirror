@@ -36,6 +36,8 @@
 #include <media/tveeprom.h>
 #include <media/v4l2-event.h>
 
+#include <linux/nospec.h>
+
 u16 cx18_service2vbi(int type)
 {
 	switch (type) {
@@ -488,8 +490,9 @@ static int cx18_enum_fmt_vid_cap(struct file *file, void *fh,
 		},
 	};
 
-	if (fmt->index > ARRAY_SIZE(formats) - 1)
+	if (fmt->index >= ARRAY_SIZE(formats))
 		return -EINVAL;
+	fmt->index = array_index_nospec(fmt->index, ARRAY_SIZE(formats));
 	*fmt = formats[fmt->index];
 	return 0;
 }

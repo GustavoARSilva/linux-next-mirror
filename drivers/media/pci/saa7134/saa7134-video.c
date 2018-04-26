@@ -30,6 +30,8 @@
 #include <media/v4l2-event.h>
 #include <media/i2c/saa6588.h>
 
+#include <linux/nospec.h>
+
 /* ------------------------------------------------------------------ */
 
 unsigned int video_debug;
@@ -1818,6 +1820,8 @@ static int saa7134_enum_fmt_vid_cap(struct file *file, void  *priv,
 {
 	if (f->index >= FORMATS)
 		return -EINVAL;
+
+	f->index = array_index_nospec(f->index, FORMATS);
 
 	strlcpy(f->description, formats[f->index].name,
 		sizeof(f->description));

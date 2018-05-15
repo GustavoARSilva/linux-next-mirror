@@ -10,6 +10,8 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 
+#include <linux/nospec.h>
+
 #include "usbip_common.h"
 #include "vhci.h"
 
@@ -235,6 +237,8 @@ static ssize_t detach_store(struct device *dev, struct device_attribute *attr,
 	if (!valid_port(pdev_nr, rhport))
 		return -EINVAL;
 
+	pdev_nr = array_index_nospec(pdev_nr, vhci_num_controllers);
+	rhport = array_index_nospec(rhport, VHCI_HC_PORTS);
 	hcd = platform_get_drvdata(vhcis[pdev_nr].pdev);
 	if (hcd == NULL) {
 		dev_err(dev, "port is not ready %u\n", port);
@@ -325,6 +329,8 @@ static ssize_t attach_store(struct device *dev, struct device_attribute *attr,
 	if (!valid_args(pdev_nr, rhport, speed))
 		return -EINVAL;
 
+	pdev_nr = array_index_nospec(pdev_nr, vhci_num_controllers);
+	rhport = array_index_nospec(rhport, VHCI_HC_PORTS);
 	hcd = platform_get_drvdata(vhcis[pdev_nr].pdev);
 	if (hcd == NULL) {
 		dev_err(dev, "port %d is not ready\n", port);

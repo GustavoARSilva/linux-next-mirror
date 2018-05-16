@@ -33,6 +33,8 @@
 #include <linux/usb.h>
 #include <linux/skbuff.h>
 
+#include <linux/nospec.h>
+
 #include <net/cfg802154.h>
 #include <net/mac802154.h>
 
@@ -286,6 +288,7 @@ static void atusb_in_good(struct urb *urb)
 	struct sk_buff *skb = urb->context;
 	struct atusb *atusb = SKB_ATUSB(skb);
 	u8 len, lqi;
+	int idx;
 
 	if (!urb->actual_length) {
 		dev_dbg(&usb_dev->dev, "atusb_in: zero-sized URB ?\n");
@@ -299,7 +302,8 @@ static void atusb_in_good(struct urb *urb)
 		return;
 	}
 
-	if (len + 1 > urb->actual_length - 1) {
+	idx = len + 1;
+	if (idx > urb->actual_length - 1) {
 		dev_dbg(&usb_dev->dev, "atusb_in: frame len %d+1 > URB %u-1\n",
 			len, urb->actual_length);
 		return;
@@ -310,7 +314,8 @@ static void atusb_in_good(struct urb *urb)
 		return;
 	}
 
-	lqi = skb->data[len + 1];
+	idx = array_index_nospec(idx, urb->actual_length);
+	lqi = skb->data[idx];
 	dev_dbg(&usb_dev->dev, "atusb_in: rx len %d lqi 0x%02x\n", len, lqi);
 	skb_pull(skb, 1);	/* remove PHR */
 	skb_trim(skb, len);	/* get payload only */

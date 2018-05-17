@@ -10,6 +10,8 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 
+#include <linux/nospec.h>
+
 #include "usbip_common.h"
 #include "vhci.h"
 
@@ -211,10 +213,14 @@ static int valid_port(__u32 pdev_nr, __u32 rhport)
 		pr_err("pdev %u\n", pdev_nr);
 		return 0;
 	}
+	pdev_nr = array_index_nospec(pdev_nr, vhci_num_controllers);
+
 	if (rhport >= VHCI_HC_PORTS) {
 		pr_err("rhport %u\n", rhport);
 		return 0;
 	}
+	rhport = array_index_nospec(rhport, VHCI_HC_PORTS);
+
 	return 1;
 }
 

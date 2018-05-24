@@ -141,27 +141,29 @@ nft_do_chain(struct nft_pktinfo *pkt, void *priv)
 {
 	const struct nft_chain *chain = priv, *basechain = chain;
 	const struct net *net = nft_net(pkt);
+	struct nft_rule **rules;
 	const struct nft_rule *rule;
 	const struct nft_expr *expr, *last;
 	struct nft_regs regs;
 	unsigned int stackptr = 0;
 	struct nft_jumpstack jumpstack[NFT_JUMP_STACK_SIZE];
-	unsigned int gencursor = nft_genmask_cur(net);
+	bool genbit = READ_ONCE(net->nft.gencursor);
 	struct nft_traceinfo info;
 
 	info.trace = false;
 	if (static_branch_unlikely(&nft_trace_enabled))
 		nft_trace_init(&info, pkt, &regs.verdict, basechain);
 do_chain:
-	rule = list_entry(&chain->rules, struct nft_rule, list);
+	if (genbit)
+		rules = rcu_dereference(chain->rules_gen_1);
+	else
+		rules = rcu_dereference(chain->rules_gen_0);
+
+	rule = *rules;
 next_rule:
 	regs.verdict.code = NFT_CONTINUE;
-	list_for_each_entry_continue_rcu(rule, &chain->rules, list) {
-
-		/* This rule is not active, skip. */
-		if (unlikely(rule->genmask & gencursor))
-			continue;
-
+	for (; *rules ; rules++) {
+		rule = *rules;
 		nft_rule_for_each_expr(expr, last, rule) {
 			if (expr->ops == &nft_cmp_fast_ops)
 				nft_cmp_fast_eval(expr, &regs);

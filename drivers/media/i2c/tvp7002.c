@@ -35,8 +35,6 @@
 #include <media/v4l2-ctrls.h>
 #include <media/v4l2-fwnode.h>
 
-#include <linux/nospec.h>
-
 #include "tvp7002_reg.h"
 
 MODULE_DESCRIPTION("TI TVP7002 Video and Graphics Digitizer driver");
@@ -786,7 +784,7 @@ static int tvp7002_enum_dv_timings(struct v4l2_subdev *sd,
 		return -EINVAL;
 
 	/* Check requested format index is within range */
-	if (!validate_index_nospec(timings->index, NUM_TIMINGS))
+	if (timings->index >= NUM_TIMINGS)
 		return -EINVAL;
 
 	timings->timings = tvp7002_timings[timings->index].timings;

@@ -55,21 +55,4 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
 									\
 	(typeof(_i)) (_i & _mask);					\
 })
-
-#define validate_index_nospec(index, size)				\
-({									\
-	bool ret = true;						\
-	typeof(index) *ptr = &(index);					\
-	typeof(size) _s = (size);					\
-									\
-	BUILD_BUG_ON(sizeof(*ptr) > sizeof(long));			\
-	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
-									\
-	if (*ptr >= _s)							\
-		ret = false;						\
-									\
-	*ptr = array_index_nospec(*ptr, _s);				\
-									\
-	ret;								\
-})
 #endif /* _LINUX_NOSPEC_H */

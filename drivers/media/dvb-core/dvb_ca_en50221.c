@@ -1398,6 +1398,7 @@ static int dvb_ca_en50221_io_do_ioctl(struct file *file,
 
 		info->type = CA_CI_LINK;
 		info->flags = 0;
+		slot = array_index_nospec(slot, ca->slot_count + 1);
 		sl = &ca->slot_info[slot];
 		if ((sl->slot_state != DVB_CA_SLOTSTATE_NONE) &&
 		    (sl->slot_state != DVB_CA_SLOTSTATE_INVALID)) {

@@ -342,6 +342,7 @@ config CRYPTO_MORUS640
 
 config CRYPTO_MORUS640_GLUE
 	tristate "MORUS-640 AEAD algorithm (glue for SIMD optimizations)"
+	depends on BROKEN
 	select CRYPTO_AEAD
 	select CRYPTO_CRYPTD
 	help
@@ -351,6 +352,7 @@ config CRYPTO_MORUS640_GLUE
 config CRYPTO_MORUS640_SSE2
 	tristate "MORUS-640 AEAD algorithm (x86_64 SSE2 implementation)"
 	depends on X86 && 64BIT
+	depends on BROKEN
 	select CRYPTO_AEAD
 	select CRYPTO_MORUS640_GLUE
 	help
@@ -364,6 +366,7 @@ config CRYPTO_MORUS1280
 
 config CRYPTO_MORUS1280_GLUE
 	tristate "MORUS-1280 AEAD algorithm (glue for SIMD optimizations)"
+	depends on BROKEN
 	select CRYPTO_AEAD
 	select CRYPTO_CRYPTD
 	help
@@ -373,6 +376,7 @@ config CRYPTO_MORUS1280_GLUE
 config CRYPTO_MORUS1280_SSE2
 	tristate "MORUS-1280 AEAD algorithm (x86_64 SSE2 implementation)"
 	depends on X86 && 64BIT
+	depends on BROKEN
 	select CRYPTO_AEAD
 	select CRYPTO_MORUS1280_GLUE
 	help
@@ -382,6 +386,7 @@ config CRYPTO_MORUS1280_SSE2
 config CRYPTO_MORUS1280_AVX2
 	tristate "MORUS-1280 AEAD algorithm (x86_64 AVX2 implementation)"
 	depends on X86 && 64BIT
+	depends on BROKEN
 	select CRYPTO_AEAD
 	select CRYPTO_MORUS1280_GLUE
 	help

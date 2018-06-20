@@ -596,8 +596,10 @@ static int afs_init_fs_context(struct fs_context *fc, struct dentry *reference)
 		break;
 
 	case FS_CONTEXT_FOR_SUBMOUNT:
-		if (!reference)
+		if (!reference) {
+			kfree(ctx);
 			return -EINVAL;
+		}
 
 		src_as = AFS_FS_S(reference->d_sb);
 		ASSERT(src_as);

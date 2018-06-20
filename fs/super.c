@@ -529,6 +529,7 @@ retry:
 				destroy_unused_super(s);
 				s = NULL;
 			}
+			spin_unlock(&sb_lock);
 			return old;
 		}
 	}

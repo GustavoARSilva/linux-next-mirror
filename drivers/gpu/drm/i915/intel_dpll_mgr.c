@@ -2566,6 +2566,7 @@ int icl_calc_dp_combo_pll_link(struct drm_i915_private *dev_priv,
 	switch (index) {
 	default:
 		MISSING_CASE(index);
+		/* fall through */
 	case 0:
 		link_clock = 540000;
 		break;

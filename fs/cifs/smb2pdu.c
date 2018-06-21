@@ -1946,8 +1946,8 @@ int smb311_posix_mkdir(const unsigned int xid, struct inode *inode,
 	if (ses && (ses->server))
 		server = ses->server;
 	else {
-		goto err_free_path;
 		rc = -EIO;
+		goto err_free_path;
 	}
 
 	/* resource #2: request */

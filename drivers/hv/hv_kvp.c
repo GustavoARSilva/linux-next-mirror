@@ -352,6 +352,7 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
 				MAX_IP_ADDR_SIZE);
 
 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
+		/* fall through */
 
 	default:
 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
